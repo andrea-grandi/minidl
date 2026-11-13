@@ -1,7 +1,7 @@
 import numpy as np
 
 from .tensor import Tensor
-from .ops import relu
+from .ops import relu, tanh, sigmoid, reshape
 
 
 class Parameter(Tensor):
@@ -34,6 +34,7 @@ class Module:
         self.training = True 
         for m in _get_modules(self.__dict__):
             m.training = True 
+
     def eval(self):
         self.training = False 
         for m in _get_modules(self.__dict__):
@@ -43,6 +44,23 @@ class Module:
 class ReLU(Module):
     def forward(self, x):
         return relu(x)
+
+
+class Tanh(Module):
+    def forward(self, x):
+        return tanh(x)
+
+
+class Sigmoid(Module):
+    def forward(self, x):
+        return sigmoid(x)
+
+
+class Flatten(Module):
+    def forward(self, x):
+        batch_size = x.shape[0]
+        flat_dim = np.prod(x.shape[1:])
+        return reshape(x, (batch_size, flat_dim))
 
 
 def _get_modules(obj) -> list['Module']:
